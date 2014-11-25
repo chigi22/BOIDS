@@ -11,7 +11,7 @@ float trigger_radius = 30;
 float maxspeed = 2.5;
 float maxforce = 0.04;
 float r = 3;
-int initialBoidCount = 100;
+int initialBoidCount = 25;
 float sepWeight = 1.5;
 float cohWeight = 1.25;
 float alignWeight = 1;
@@ -85,6 +85,7 @@ class Boid {
   PVector velocity;
   PVector acceleration;
   float mass;
+  ArrayList<Boid> neighbors = new ArrayList<Boid>();
   OscMessage myMessage;
   
   Boid(float x, float y, int IDin, int subFlockIn) {
@@ -123,9 +124,18 @@ class Boid {
   }
   // We accumulate a new acceleration each time based on three rules
   void flock(ArrayList<Boid> boids) {
-    PVector sep = separate(boids);   // Separation
-    PVector ali = align(boids);      // Alignment
-    PVector coh = cohesion(boids);   // Cohesion
+    if (neighbors.size() !=0) {
+      neighbors.clear();
+    }
+    for (Boid other : boids) {
+      float d = PVector.dist(location, other.location);
+      if ((d > 0) && (d < neighborDist)) {
+        neighbors.add(other);
+      }
+    }
+    PVector sep = separate(neighbors);   // Separation
+    PVector ali = align(neighbors);      // Alignment
+    PVector coh = cohesion(neighbors);   // Cohesion
     // Arbitrarily weight these forces
     sep.mult(sepWeight);
     ali.mult(alignWeight);
@@ -250,15 +260,12 @@ class Boid {
     // For every boid in the system, check if it's too close
     for (Boid other : boids) {
       float d = PVector.dist(location, other.location);
-      // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-      if ((d > 0) && (d < desiredseparation)) {
-        // Calculate vector pointing away from neighbor
-        PVector diff = PVector.sub(location, other.location);
-        diff.normalize();
-        diff.div(d);        // Weight by distance
-        steer.add(diff);
-        count++;            // Keep track of how many
-      }
+      // Calculate vector pointing away from neighbor
+      PVector diff = PVector.sub(location, other.location);
+      diff.normalize();
+      diff.div(d);        // Weight by distance
+      steer.add(diff);
+      count++;            // Keep track of how many
     }
     // Average -- divide by how many
     if (count > 0) {
@@ -285,11 +292,8 @@ class Boid {
     PVector sum = new PVector(0, 0);
     int count = 0;
     for (Boid other : boids) {
-      float d = PVector.dist(location, other.location);
-      if ((d > 0) && (d < neighborDist)) {
-        sum.add(other.velocity);
-        count++;
-      }
+      sum.add(other.velocity);
+      count++;
     }
     if (count > 0) {
       sum.div((float)count);
@@ -315,10 +319,8 @@ class Boid {
     int count = 0;
     for (Boid other : boids) {
       float d = PVector.dist(location, other.location);
-      if ((d > 0) && (d < neighborDist)) {
-        sum.add(other.location); // Add location
-        count++;
-      }
+      sum.add(other.location); // Add location
+      count++;
     }
     if (count > 0) {
       sum.div(count);
