@@ -76,7 +76,7 @@ while (now < later) {
         mapParams(simParams, subFlockID) @=> grainParams;
         spork ~ grainFlinger(grainParams[0]*1::ms, grainParams[1]*1::ms, grainParams[2]*1::ms, grainParams[3], grainParams[4]*1::ms, grainParams[5], subFlockID);
     }
-    xmit.startMsg( "/boids/killSubFlock", "i" )
+    xmit.startMsg( "/boids/killSubFlock", "i" );
     0 $ int => xmit.addInt;
     <<< "kill">>>;
 }
