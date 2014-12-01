@@ -42,6 +42,7 @@ void setup() {
 void draw() {
   background(50);
   flock.run();
+  flock.addQueuedBoids();
 }
 
 void keyPressed() {
@@ -79,7 +80,17 @@ void keyPressed() {
 }
 
 void oscEvent(OscMessage theOscMessage) {
-  // add code to manipulate flock here
+  if(theOscMessage.checkAddrPattern("/boids/addSubFlock")==true) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("iiii")) {
+      int myCount = theOscMessage.get(0).intValue();  
+      int myX = theOscMessage.get(1).intValue();
+      int myY = theOscMessage.get(2).intValue();
+      int mySubFlockID = theOscMessage.get(3).intValue();
+      flock.addSubFlock(myCount, myX, myY, mySubFlockID);
+      return;
+    }
+  }
 }
   
 // The Boid class
@@ -339,8 +350,10 @@ void borders() {
 class Flock {
   // how can I change data structure to make things like killSubFlock smarter?
   ArrayList<Boid> boids; // An ArrayList for all the boids
-    Flock() {
+  ArrayList<Boid> boidsToAdd;
+  Flock() {
     boids = new ArrayList<Boid>(); // Initialize the ArrayList
+    boidsToAdd = new ArrayList<Boid>();
   }
   
   void run() {
@@ -350,7 +363,16 @@ class Flock {
   }
   
   void addBoid(Boid b) {
-    boids.add(b);
+    boidsToAdd.add(b);
+  }
+  
+  void addQueuedBoids() {
+    if (boidsToAdd.size() > 0) {
+      for (int i = 0; i < boidsToAdd.size(); i++) {
+        boids.add(boidsToAdd.get(i));
+      }
+      boidsToAdd.clear();
+    }
   }
   
   void addSubFlock(int count, int x, int y, int subFlockID) {

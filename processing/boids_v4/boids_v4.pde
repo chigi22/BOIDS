@@ -3,17 +3,17 @@ int numBoids;
 boolean drawEnable = false;
 boolean oscEnable = true;
 int frameRateInt = 60;
-int screenSize = 900;
-float neighborDist = 35;
+int screenSize = 800;
+float neighborDist = 40;
 float borderRepulsionDist = 35;
 float repulsionEfficiency = 0.01;
-float trigger_radius = 30;
-float maxspeed = 2.5;
+float trigger_radius = 25;
+float maxspeed = 2.2;
 float maxforce = 0.04;
 float r = 3;
-int initialBoidCount = 25;
+int initialBoidCount = 100;
 float sepWeight = 1.5;
-float cohWeight = 1.25;
+float cohWeight = 1.35;
 float alignWeight = 1;
 int currentFlockID = 0;
 Flock flock;
@@ -216,40 +216,40 @@ class Boid {
   //      if (location.y > height+r) location.y = -r;
   //  }
   // 2) Bounce (elastic)
-    void borders() {
-      if (location.x < -r) {
-        location.x = -r;
-        velocity.x = -velocity.x;
-      }
-      if (location.y < -r) {
-        location.y = -r; 
-       velocity.y = -velocity.y;
-      }
-      if (location.x > width+r) {
-        location.x = width+r;
-        velocity.x = -velocity.x;
-      }
-      if (location.y > height+r) {
-        location.y = height+r;
-        velocity.y = -velocity.y;
-      }
-    }
+  //  void borders() {
+  //    if (location.x < -r) {
+  //      location.x = -r;
+  //      velocity.x = -velocity.x;
+  //    }
+  //    if (location.y < -r) {
+  //      location.y = -r; 
+  //     velocity.y = -velocity.y;
+  //    }
+  //    if (location.x > width+r) {
+  //      location.x = width+r;
+  //      velocity.x = -velocity.x;
+  //    }
+  //    if (location.y > height+r) {
+  //      location.y = height+r;
+  //      velocity.y = -velocity.y;
+  //    }
+  //  }
 
 // 3. repulsive (perhaps try a 1/r^2 coulomb-like repulsion)
-//  void borders() {
-//    if (location.x < borderRepulsionDist) {
-//      velocity.x = velocity.x + (borderRepulsionDist - location.x) * repulsionEfficiency;
-//    }
-//    if (location.y < borderRepulsionDist) {
-//      velocity.y = velocity.y + (borderRepulsionDist - location.y) * repulsionEfficiency;
-//    }
-//    if (location.x > width - borderRepulsionDist) {
-//      velocity.x = velocity.x + (width - borderRepulsionDist - location.x) * repulsionEfficiency;
-//    }
-//    if (location.y > height - borderRepulsionDist) {
-//      velocity.y = velocity.y + (height - borderRepulsionDist - location.y) * repulsionEfficiency;
-//    }
-//  }
+  void borders() {
+    if (location.x < borderRepulsionDist) {
+      velocity.x = velocity.x + (borderRepulsionDist - location.x) * repulsionEfficiency;
+   }
+   if (location.y < borderRepulsionDist) {
+     velocity.y = velocity.y + (borderRepulsionDist - location.y) * repulsionEfficiency;
+    }
+    if (location.x > width - borderRepulsionDist) {
+      velocity.x = velocity.x + (width - borderRepulsionDist - location.x) * repulsionEfficiency;
+    }
+    if (location.y > height - borderRepulsionDist) {
+      velocity.y = velocity.y + (height - borderRepulsionDist - location.y) * repulsionEfficiency;
+    }
+  }
 
   // Separation
   // Method checks for nearby boids and steers away
@@ -257,7 +257,6 @@ class Boid {
     float desiredseparation = 25.0f;
     PVector steer = new PVector(0, 0, 0);
     int count = 0;
-    // For every boid in the system, check if it's too close
     for (Boid other : boids) {
       float d = PVector.dist(location, other.location);
       // Calculate vector pointing away from neighbor
