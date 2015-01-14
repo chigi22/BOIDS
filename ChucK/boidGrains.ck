@@ -33,7 +33,7 @@ for (0=> int i; i < numObjects; i++) {
     lisaArray[i] => envArray[i] => pannerArray[i] => dac;
     1::second $ dur => envArray[i].duration;
     1 => envArray[i].target;
-    lisaArray[i].maxVoices(50);
+    lisaArray[i].maxVoices(75);
     fileNameArray[i] => bufferArray[i].read;
     bufferArray[i].samples()*1::samp => lisaArray[i].duration;
     for (0 => int j; j < bufferArray[i].samples(); j++) {
@@ -105,7 +105,7 @@ addSubFlock(60, 100, 700, 2);
 scatter(1);
 doGrainyThings(13);
 scatter(0);
-setTrigRad(64);
+setTrigRad(48);
 doGrainyThings(5);
 setTrigRad(32);
 doGrainyThings(5);
@@ -235,7 +235,7 @@ fun float[] mapParams(float simParams[], int subFlockID) {
         (simParams[3]/screenSize+0.1)*(grainParams[0]*.33) => grainParams[2];
         // gain
         // gainFactor*1.1*simParams[5] => grainParams[5];
-        gainFactor*(simParams[5] + 0.05) => grainParams[5];
+        gainFactor*(simParams[5] + 0.025) => grainParams[5];
         // <<< simParams[4], simParams[5] >>>;
     }
     if (subFlockID==4) {
